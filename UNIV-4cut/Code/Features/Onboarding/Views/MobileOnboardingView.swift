@@ -9,13 +9,13 @@ struct MobileOnboardingView: View {
     // 상수 선언
     private let titleText = "찍기전에 보고 갈까요?!"
     private let iconTexts = [
-        ("cloud", "타이머는 6초입니다!"),
-        ("cloud.fill", "촬영 기회는 딱 한번! 예쁘게 찍어봐요!."),
+//        ("cloud", "타이머는 6초입니다!"),
+//        ("cloud.fill", "촬영 기회는 딱 한번! 예쁘게 찍어봐요!."),
         ("cloud", "사진 촬영은 총 4번 됩니다."),
         ("cloud.fill", "촬영하기를 누르면 바로 촬영이 시작돼요!"),
         ("camera", "촬영 완료 후 아래 4가지 프레임 중 1가지를 선택할 수 있어요!")
     ]
-    private let frameImageName = "4cut_exmaple_onboarding"
+    private let frameImageName = "emotionCut_onboarding"
     
     // 뒤로가기 버튼 뷰
     var backButton: some View {

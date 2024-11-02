@@ -1,18 +1,23 @@
 import UIKit
 
 class ImageProcessor {
-    // 이미지 두 개 합치기
-    func mergeImage(image: UIImage, frameImage:UIImage) -> UIImage? {
-
-        let size = frameImage.size
+    // Merge base image with an emotion overlay
+    func mergeImage(baseImage: UIImage, emotionImage: UIImage) -> UIImage? {
+        let size = baseImage.size
         UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-
-        image.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height-350))
-        frameImage.draw(in: CGRect(x: 0, y: 0, width: size.width + 5, height: size.height))
-
+        
+        // Draw the base image
+        baseImage.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        
+        // Draw the emotion overlay on top
+        let overlaySize = CGSize(width: size.width * 0.3, height: size.height * 0.3) // Adjust overlay size
+        let overlayPosition = CGPoint(x: size.width - overlaySize.width - 10, y: 10) // Adjust overlay position
+        emotionImage.draw(in: CGRect(origin: overlayPosition, size: overlaySize))
+        
+        // Get the final merged image
         let mergedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-
+        
         return mergedImage
     }
 }

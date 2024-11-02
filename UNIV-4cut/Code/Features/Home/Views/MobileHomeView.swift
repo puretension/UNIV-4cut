@@ -7,7 +7,7 @@ struct MobileHomeView: View {
             VStack {
                 Spacer()
                 // logo image
-                Image("logo")
+                Image("new_logo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 300, height: 300)

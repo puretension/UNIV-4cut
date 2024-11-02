@@ -5,7 +5,7 @@ import Firebase
 struct UNIV_4cutApp: App {
     // 파베 초기화
     init() {
-         FirebaseApp.configure()
+//         FirebaseApp.configure()
      }
     
     var body: some Scene {

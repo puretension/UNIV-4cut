@@ -1,64 +1,77 @@
 import SwiftUI
 
+
+
+//// 예제용 ButtonActionView
+//struct ButtonActionView: View {
+//    var viewModel: ResultViewModel
+//    @Binding var showingHomeView: Bool
+//    @Binding var showingQRView: Bool
+//    var mergedImage: UIImage
+//    var selectedFrameIndex: Int
+//    var processor: ImageProcessor
+//    
+//    var body: some View {
+//        Button("작업 실행") {
+//            // 여기에 버튼 작업을 추가하세요
+//        }
+//    }
+//}
+
 struct TakePhotoView: View {
     @StateObject var cameraViewModel = CameraViewModel()
     @State private var isPresentingResultView = false
+    let processor = ImageProcessor()
     
     var body: some View {
         ZStack {
-            // 카메라 뷰를 배경으로 설정
             CustomCameraView(viewModel: cameraViewModel)
             
             VStack {
                 if cameraViewModel.remainingTime > 0 {
-                    VStack{
-                        
+                    VStack {
                         Text("남은 시간")
                             .font(.custom("Pretendard-SemiBold", size: 40))
                             .foregroundColor(.black)
-                            .padding(.top,40)
+                            .padding(.top, 40)
                         Text("\(cameraViewModel.remainingTime)")
                             .font(.custom("Pretendard-SemiBold", size: 100))
                             .foregroundColor(.black)
-
                     }
-            
                 } else {
                     Text("📸")
                         .font(.title)
                         .padding()
                 }
-                Spacer() // 상단 여백 생성
+                
+                Spacer()
+                
                 Text("\(cameraViewModel.capturedImages.count)/4")
                     .foregroundColor(.white)
                     .font(.custom("Pretendard-SemiBold", size: 30))
                     .padding()
-                    .padding(.horizontal,17)
+                    .padding(.horizontal, 17)
                     .background(Color.black.opacity(0.9))
                     .cornerRadius(36)
-                    .padding(.bottom, 40) // 상단 Safe Area를 고려한 여백 추가
-                // 타이머 표시
-
+                    .padding(.bottom, 40)
             }
             .foregroundColor(.white)
-
         }
         .onAppear {
             cameraViewModel.startCapturing()
         }
         .fullScreenCover(isPresented: $isPresentingResultView) {
-            // ResultView에 mergedImage가 nil인 경우에 대한 처리를 추가합니다.
-            if let exampleImage = UIImage(named: "4cut_example") {
-                ResultView(mergedImage: cameraViewModel.mergedImage ?? exampleImage)
-            } else {
-                ResultView(mergedImage: UIImage())
+            if cameraViewModel.capturedImages.count == 4 {
+                // Apply emotion overlay to each captured image
+                let emotionOverlay = UIImage(named: "emotion_joy") ?? UIImage()
+                let mergedImages = cameraViewModel.capturedImages.compactMap {
+                    processor.mergeImage(baseImage: $0, emotionImage: emotionOverlay)
+                }
+                ResultView(mergedImages: mergedImages) // Display merged images in ResultView
             }
-            
         }
-        .onChange(of: cameraViewModel.mergedImage) { _ in
-            // mergedImage의 상태 변화가 감지되면, isPresentingResultView를 true로 설정하여 sheet를 표시합니다.
-            print(cameraViewModel.mergedImage)
-            isPresentingResultView = cameraViewModel.mergedImage != nil
+        .onChange(of: cameraViewModel.capturedImages) { newValue in
+            isPresentingResultView = newValue.count == 4
         }
     }
 }

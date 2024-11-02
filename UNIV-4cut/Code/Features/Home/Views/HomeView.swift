@@ -7,7 +7,10 @@ struct HomeView: View {
             VStack {
                 Spacer()
                 // logo image
-                Image("logo")
+                Image("emotionCut_joy").resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 400, height: 400)
+                Image("new_logo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 400, height: 400)

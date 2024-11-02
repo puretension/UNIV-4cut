@@ -2,96 +2,86 @@ import SwiftUI
 
 struct ButtonActionView: View {
     @ObservedObject var viewModel: ResultViewModel
+    @ObservedObject var emotionResultViewModel: EmotionResultViewModel
     @Binding var showingHomeView: Bool
     @Binding var showingQRView: Bool
-    
-    @State private var showingAlert = false
-    @State private var alertTitle = ""
-    @State private var alertMessage = ""
-    
+    @Binding var selectedEmotion: EmotionViewData? // Change to Binding
+
+    @State private var showingEmotionView = false
     let mergedImage: UIImage
     let selectedFrameIndex: Int
     let processor: ImageProcessor
-    
+
     var body: some View {
         HStack(alignment: .center) {
             Spacer()
-            ReusableButton(title: "홈",boxWidth:90) {
+            ReusableButton(title: "홈", boxWidth: 90) {
+                viewModel.reset()
                 showingHomeView = true
             }
             .fullScreenCover(isPresented: $showingHomeView) {
                 HomeView()
             }
-            
-            ReusableButton(title: "QR 코드",boxWidth:90) {
+
+            ReusableButton(title: "QR 코드", boxWidth: 90) {
                 showingQRView = true
                 generateQRCode()
             }
             .sheet(isPresented: $showingQRView) {
                 QRCodeSheetView(viewModel: viewModel, showingHomeView: $showingHomeView, showingQRView: $showingQRView)
             }
-            
-            ReusableButton(title: "앨범 저장",boxWidth:90) {
+
+            ReusableButton(title: "앨범 저장", boxWidth: 90) {
                 saveImgInGallery()
+            }
+
+            ReusableButton(title: "감정 보기", boxWidth: 90) {
+                selectedEmotion = emotionResultViewModel.getRandomEmotions(count: 1).first
+                showingEmotionView = true
+            }
+            .sheet(isPresented: $showingEmotionView) {
+                if let emotion = selectedEmotion {
+                    EmotionResultView(viewModel: emotionResultViewModel, emotion: emotion)
+                } else {
+                    Text("감정 데이터를 불러올 수 없습니다.")
+                }
             }
             Spacer()
         }
-        .alert(isPresented: $showingAlert) {
-            Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("확인")))
-        }
     }
-    
-    // 큐알코드 생성
-    private func generateQRCode() {
-        if let frameImage = UIImage(named: "4cut_\(selectedFrameIndex + 1)") {
-            if let frameMergedImage = processor.mergeImage(image: mergedImage, frameImage: frameImage) {
-                viewModel.uploadImageAndGenerateQRCode(image: frameMergedImage)
-            } else {
-                print("이미지 합치기에 실패했습니다.")
-            }
-        }
-    }
-    
-    // 이미지 저장
-    private func saveImgInGallery() {
-        if let frameImage = UIImage(named: "4cut_\(selectedFrameIndex + 1)") {
-            if let frameMergedImage = processor.mergeImage(image: mergedImage, frameImage: frameImage) {
-                viewModel.saveImageToAlbum(image: frameMergedImage) { success, error in
-                    if success {
-                        alertTitle = "저장 완료"
-                        alertMessage = "이미지가 성공적으로 저장되었습니다."
-                    } else if let error = error {
-                        alertTitle = "저장 실패"
-                        alertMessage = "앨범에 저장 실패: \(error.localizedDescription)"
-                    }
-                    showingAlert =  true
-                }
-            } else {
-                alertTitle = "저장 실패"
-                alertMessage = "이미지 합치기에 실패했습니다."
-                showingAlert = true
-            }
-        } else {
-            alertTitle = "저장 실패"
-            alertMessage = "프레임 이미지를 불러올 수 없습니다."
-            showingAlert = true
-        }
-    }
-}
 
-struct ButtonActionView_Previews: PreviewProvider {
-    static var previews: some View {
-        StatefulPreviewWrapper(false) { showingHomeView in
-            StatefulPreviewWrapper(false) { showingQRView in
-                ButtonActionView(
-                    viewModel: ResultViewModel(),
-                    showingHomeView: showingHomeView,
-                    showingQRView: showingQRView,
-                    mergedImage: UIImage(),
-                    selectedFrameIndex: 0,
-                    processor: ImageProcessor()
-                )
-            }
-        }
+
+    private func generateQRCode() {
+//        if let frameImage = UIImage(named: "4cut_\(selectedFrameIndex + 1)") {
+//            if let frameMergedImage = processor.mergeImage(image: mergedImage, frameImage: frameImage) {
+//                viewModel.uploadImageAndGenerateQRCode(image: frameMergedImage)
+//            } else {
+//                print("이미지 합치기에 실패했습니다.")
+//            }
+//        }
+    }
+
+    private func saveImgInGallery() {
+//        if let frameImage = UIImage(named: "4cut_\(selectedFrameIndex + 1)") {
+//            if let frameMergedImage = processor.mergeImage(image: mergedImage, frameImage: frameImage) {
+//                viewModel.saveImageToAlbum(image: frameMergedImage) { success, error in
+//                    if success {
+//                        alertTitle = "저장 완료"
+//                        alertMessage = "이미지가 성공적으로 저장되었습니다."
+//                    } else if let error = error {
+//                        alertTitle = "저장 실패"
+//                    }
+//                    showingAlert = true
+//                }
+//            } else {
+//                alertTitle = "저장 실패"
+//                alertMessage = "이미지 합치기에 실패했습니다."
+//                showingAlert = true
+//            }
+//        } else {
+//            alertTitle = "저장 실패"
+//            alertMessage = "프레임 이미지를 불러올 수 없습니다."
+//            showingAlert = true
+//        }
     }
 }

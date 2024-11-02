@@ -13,7 +13,13 @@ class ResultViewModel: ObservableObject {
     @Published var qrCodeImage: UIImage? = nil // QR 코드 이미지
 
     let context = CIContext()
-    let filter = CIFilter.qrCodeGenerator()
+     let filter = CIFilter.qrCodeGenerator()
+     
+     func reset() {
+         isFirst = true
+         qrCodeImage = nil
+     }
+
     
     // 다시 찍기를 누르면 isFrist를 False로 바꿈
     func retakeProcess() {
